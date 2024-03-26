@@ -40,5 +40,7 @@ namespace Veterinary.Shared.Entities
         public string Address { get; set; }
 
         public string FullName => $"{FirstName} {LastName}";
+
+        public virtual ICollection<Agenda> Agendas { get; set; }
     }
 }
