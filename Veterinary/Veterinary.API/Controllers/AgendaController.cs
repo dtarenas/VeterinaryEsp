@@ -6,63 +6,63 @@ using Veterinary.Shared.Entities;
 namespace Veterinary.API.Controllers
 {
     [ApiController]
-    [Route("/api/owners")]
-    public class OwnerController : ControllerBase
+    [Route("/api/agendas")]
+    public class AgendaController : ControllerBase
     {
         private readonly VeterinaryDbContext _context;
 
-        public OwnerController(VeterinaryDbContext context)
+        public AgendaController(VeterinaryDbContext context)
         {
             _context = context;
         }
 
-        //Metodo Get por lista--- Select * From Owners
+        //Metodo Get por lista--- Select * From Agendas
         [HttpGet]
         public async Task<ActionResult> Get()
         {
-            return Ok(await _context.Owners.ToListAsync());
+            return Ok(await _context.Agendas.ToListAsync());
         }
 
         //Metodo post' Guardar registros
         [HttpPost]
-        public async Task<ActionResult> Post(Owner owner)
+        public async Task<ActionResult> Post(Agenda agenda)
         {
-            _context.Owners.Add(owner);
+            _context.Agendas.Add(agenda);
             await _context.SaveChangesAsync();
             return Ok();
         }
 
-        //Metodo Get por parametro' Select * From Owners
+        //Metodo Get por parametro' Select * From Agendas
         [HttpGet("{id:int}")]
         public async Task<ActionResult> Get(int id)
         {
-            var owner = await _context.Owners.FirstOrDefaultAsync(x => x.Id == id);
-            if (owner == null)
+            var agenda = await _context.Agendas.FirstOrDefaultAsync(x => x.Id == id);
+            if (agenda == null)
             {
-                return NotFound(owner); //404
+                return NotFound(agenda); //404
             }
 
-            return Ok(owner);
+            return Ok(agenda);
         }
 
         //Metodo Put - Actualizar registros
 
         [HttpPut]
-        public async Task<ActionResult> Put(Owner owner)
+        public async Task<ActionResult> Put(Agenda agenda)
         {
-            _context.Owners.Update(owner);
+            _context.Agendas.Update(agenda);
             await _context.SaveChangesAsync();
-            return Ok(owner);
+            return Ok(agenda);
         }
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var filasafectadas = await _context.Owners
+            var affectedRows = await _context.Agendas
                 .Where(x => x.Id == id)
                 .ExecuteDeleteAsync();
-            
-            if (filasafectadas == 0)
+
+            if (affectedRows == 0)
             {
                 return NotFound(); //404
             }

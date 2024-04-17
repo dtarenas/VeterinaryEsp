@@ -6,63 +6,63 @@ using Veterinary.Shared.Entities;
 namespace Veterinary.API.Controllers
 {
     [ApiController]
-    [Route("/api/owners")]
-    public class OwnerController : ControllerBase
+    [Route("/api/serviceTypes")]
+    public class ServiceTypeController : ControllerBase
     {
         private readonly VeterinaryDbContext _context;
 
-        public OwnerController(VeterinaryDbContext context)
+        public ServiceTypeController(VeterinaryDbContext context)
         {
             _context = context;
         }
 
-        //Metodo Get por lista--- Select * From Owners
+        //Metodo Get por lista--- Select * From ServiceTypes
         [HttpGet]
         public async Task<ActionResult> Get()
         {
-            return Ok(await _context.Owners.ToListAsync());
+            return Ok(await _context.ServiceTypes.ToListAsync());
         }
 
         //Metodo post' Guardar registros
         [HttpPost]
-        public async Task<ActionResult> Post(Owner owner)
+        public async Task<ActionResult> Post(ServiceType serviceType)
         {
-            _context.Owners.Add(owner);
+            _context.ServiceTypes.Add(serviceType);
             await _context.SaveChangesAsync();
             return Ok();
         }
 
-        //Metodo Get por parametro' Select * From Owners
+        //Metodo Get por parametro' Select * From ServiceTypes
         [HttpGet("{id:int}")]
         public async Task<ActionResult> Get(int id)
         {
-            var owner = await _context.Owners.FirstOrDefaultAsync(x => x.Id == id);
-            if (owner == null)
+            var serviceType = await _context.ServiceTypes.FirstOrDefaultAsync(x => x.Id == id);
+            if (serviceType == null)
             {
-                return NotFound(owner); //404
+                return NotFound(serviceType); //404
             }
 
-            return Ok(owner);
+            return Ok(serviceType);
         }
 
         //Metodo Put - Actualizar registros
 
         [HttpPut]
-        public async Task<ActionResult> Put(Owner owner)
+        public async Task<ActionResult> Put(ServiceType serviceType)
         {
-            _context.Owners.Update(owner);
+            _context.ServiceTypes.Update(serviceType);
             await _context.SaveChangesAsync();
-            return Ok(owner);
+            return Ok(serviceType);
         }
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var filasafectadas = await _context.Owners
+            var affectedRoes = await _context.ServiceTypes
                 .Where(x => x.Id == id)
                 .ExecuteDeleteAsync();
-            
-            if (filasafectadas == 0)
+
+            if (affectedRoes == 0)
             {
                 return NotFound(); //404
             }

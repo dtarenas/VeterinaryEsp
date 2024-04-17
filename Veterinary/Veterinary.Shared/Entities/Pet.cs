@@ -34,6 +34,7 @@ namespace Veterinary.Shared.Entities
         public virtual PetType PetTypes { get; set; }
 
         public virtual ICollection<Agenda> Agendas { get; set; }
+
         public virtual ICollection<History> Histories { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Veterinary.WEB.Repositories;
 
 namespace Veterinary.WEB
 {
@@ -12,7 +13,7 @@ namespace Veterinary.WEB
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-
+            builder.Services.AddScoped<IRepository, Repository>();
             await builder.Build().RunAsync();
         }
     }

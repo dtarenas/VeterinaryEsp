@@ -6,63 +6,63 @@ using Veterinary.Shared.Entities;
 namespace Veterinary.API.Controllers
 {
     [ApiController]
-    [Route("/api/owners")]
-    public class OwnerController : ControllerBase
+    [Route("/api/histories")]
+    public class HistoryController : ControllerBase
     {
         private readonly VeterinaryDbContext _context;
 
-        public OwnerController(VeterinaryDbContext context)
+        public HistoryController(VeterinaryDbContext context)
         {
             _context = context;
         }
 
-        //Metodo Get por lista--- Select * From Owners
+        //Metodo Get por lista--- Select * From Histories
         [HttpGet]
         public async Task<ActionResult> Get()
         {
-            return Ok(await _context.Owners.ToListAsync());
+            return Ok(await _context.Histories.ToListAsync());
         }
 
         //Metodo post' Guardar registros
         [HttpPost]
-        public async Task<ActionResult> Post(Owner owner)
+        public async Task<ActionResult> Post(History history)
         {
-            _context.Owners.Add(owner);
+            _context.Histories.Add(history);
             await _context.SaveChangesAsync();
             return Ok();
         }
 
-        //Metodo Get por parametro' Select * From Owners
+        //Metodo Get por parametro' Select * From Histories
         [HttpGet("{id:int}")]
         public async Task<ActionResult> Get(int id)
         {
-            var owner = await _context.Owners.FirstOrDefaultAsync(x => x.Id == id);
-            if (owner == null)
+            var history = await _context.Histories.FirstOrDefaultAsync(x => x.Id == id);
+            if (history == null)
             {
-                return NotFound(owner); //404
+                return NotFound(history); //404
             }
 
-            return Ok(owner);
+            return Ok(history);
         }
 
         //Metodo Put - Actualizar registros
 
         [HttpPut]
-        public async Task<ActionResult> Put(Owner owner)
+        public async Task<ActionResult> Put(History history)
         {
-            _context.Owners.Update(owner);
+            _context.Histories.Update(history);
             await _context.SaveChangesAsync();
-            return Ok(owner);
+            return Ok(history);
         }
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var filasafectadas = await _context.Owners
+            var affectedRows = await _context.Histories
                 .Where(x => x.Id == id)
                 .ExecuteDeleteAsync();
-            
-            if (filasafectadas == 0)
+
+            if (affectedRows == 0)
             {
                 return NotFound(); //404
             }
