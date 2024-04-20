@@ -4,9 +4,9 @@
 @using Veterinary.WEB.Shared
 
 
-@inject IRepository repository 
+@inject IRepository repository
 
-<h1>OwnersIndex</h1>
+<h1>Owners</h1>
 
 <div class="mb-3">
 
@@ -18,7 +18,7 @@
 
 <GenericList MyList="Owners">
 
-    <body>
+    <Body>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -44,9 +44,12 @@
             </tbody>
         </table>
 
-    </body>
+    </Body>
 
 </GenericList>
+
+
+
 
 
 @code {
@@ -58,6 +61,9 @@
     {
         var responseHppt = await repository.GetAsync<List<Owner>>("/api/owners");
         Owners = responseHppt.Response!;
+
+
+
+
     }
 }
-
