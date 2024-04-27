@@ -1,0 +1,53 @@
+﻿@using Veterinary.Shared.Entities
+
+<EditForm Model="Owner" OnSubmit="OnSubmit">
+    <DataAnnotationsValidator />
+    <div class="col-6">
+        <div class="mb-3">
+            <label>First Name</label>
+            <div>
+                <InputText class="form-control" @bind-Value=@Owner.FirstName />
+                <ValidationMessage For="@(() => Owner.FirstName)" />
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="mb-3">
+            <label For">Last Name</label>
+            <div>
+                <InputText class="form-control" @bind-Value=@Owner.LastName />
+                <ValidationMessage For="@(() => Owner.LastName)" />
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="mb-3">
+            <label>Address</label>
+            <div>
+                <InputText class="form-control" @bind-Value=@Owner.Address />
+                <ValidationMessage For="@(() => Owner.Address)" />
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-12 text-center">
+        <button class="btn btn-primary" type="submit">Save</button>
+        <button class="btn btn-secondary" type="button" onclick="ReturnAction">Cancel</button>
+    </div>
+</EditForm>
+
+
+@code {
+    [EditorRequired]
+    [Parameter]
+    public Owner Owner { get; set; }
+
+    [EditorRequired]
+    [Parameter]
+    public EventCallback OnSubmit { get; set; }
+
+    [EditorRequired]
+    [Parameter]
+    public EventCallback ReturnAction { get; set; }
+}

@@ -1,0 +1,28 @@
+﻿@page "/owners/create"
+
+@inject IRepository repository
+@inject NavigationManager navigatorManager
+
+<h3>Owner Create</h3>
+<OwnerForm Owner="Owner" OnSubmit="Create" ReturnAction="Return"></OwnerForm>
+
+@code {
+    private Owner Owner = new();
+
+    private async Task Create()
+    {
+        var response = await repository.Post("/api/Owner", Owner);
+        if (response.Error)
+        {
+            var message = await response.GetErrorMessageAsync();
+            return;
+        }
+
+        navigatorManager.NavigateTo("/Owners");
+    }
+
+    private void Return()
+    {
+        navigatorManager.NavigateTo("/Owners");
+    }
+}

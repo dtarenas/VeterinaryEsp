@@ -28,6 +28,20 @@
                 </tr>
             </thead>
             <tbody>
+                <tr>
+                    <td>
+                        First Name
+                    </td>
+                    <td>
+                        Last Name
+                    </td>
+                    <td>
+                        Address
+                    </td>
+                    <td>
+                        Actions
+                    </td>
+                </tr>
                 @foreach (var owner in Owners!)
                 {
                     <tr>
@@ -35,10 +49,15 @@
                             @owner.FirstName
                         </td>
                         <td>
+                            @owner.LastName
+                        </td>
+                        <td>
+                            @owner.Address
+                        </td>
+                        <td>
                             <a class="btn btn-warning">Editar</a>
                             <button class="btn btn-danger">Borrar</button>
                         </td>
-
                     </tr>
                 }
             </tbody>
