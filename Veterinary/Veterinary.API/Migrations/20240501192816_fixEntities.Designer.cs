@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Veterinary.API.Data;
 
@@ -11,9 +12,11 @@ using Veterinary.API.Data;
 namespace Veterinary.API.Migrations
 {
     [DbContext(typeof(VeterinaryDbContext))]
-    partial class VeterinaryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240501192816_fixEntities")]
+    partial class fixEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -319,8 +322,8 @@ namespace Veterinary.API.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("ContactPhone")
                         .HasMaxLength(10)

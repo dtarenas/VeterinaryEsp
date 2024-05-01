@@ -1,53 +1,132 @@
-﻿@using Veterinary.Shared.Entities
+﻿@inject SweetAlertService swal
 
-<EditForm Model="Owner" OnSubmit="OnSubmit">
+
+<NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation"></NavigationLock>
+
+
+<EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
-    <div class="col-6">
-        <div class="mb-3">
-            <label>First Name</label>
-            <div>
-                <InputText class="form-control" @bind-Value=@Owner.FirstName />
-                <ValidationMessage For="@(() => Owner.FirstName)" />
-            </div>
+
+    <div class="mb-3 form-group">
+        <label>Documento:</label>
+        <div>
+            <InputText class="form-control" width="10" @bind-Value="Owner.Document"></InputText>
+            <ValidationMessage For="@(() => Owner.Document)" />
         </div>
     </div>
-    <div class="col-6">
-        <div class="mb-3">
-            <label For">Last Name</label>
-            <div>
-                <InputText class="form-control" @bind-Value=@Owner.LastName />
-                <ValidationMessage For="@(() => Owner.LastName)" />
+
+    <div class="mb-3 form-group">
+        <div class="row">
+            <div class="col-6">
+                <label>Nombres:</label>
+                <div>
+                    <InputText class="form-control" width="10" @bind-Value="@Owner.FirstName"></InputText>
+                    <ValidationMessage For="@(() => Owner.FirstName)" />
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="col-6">
-        <div class="mb-3">
-            <label>Address</label>
-            <div>
-                <InputText class="form-control" @bind-Value=@Owner.Address />
-                <ValidationMessage For="@(() => Owner.Address)" />
+            <div class="col-6">
+                <label>Apellidos:</label>
+                <div>
+                    <InputText class="form-control" width="10" @bind-Value="Owner.LastName"></InputText>
+                    <ValidationMessage For="@(() => Owner.LastName)" />
+                </div>
             </div>
         </div>
     </div>
 
-
-    <div class="col-12 text-center">
-        <button class="btn btn-primary" type="submit">Save</button>
-        <button class="btn btn-secondary" type="button" onclick="ReturnAction">Cancel</button>
+    <div class="mb-3 form-group">
+        <div class="row">
+            <div class="col-4">
+                <label>Email:</label>
+                <div>
+                    <InputText class="form-control" width="10" @bind-Value="Owner.EmailAddress"></InputText>
+                    <ValidationMessage For="@(() => Owner.EmailAddress)" />
+                </div>
+            </div>
+            <div class="col-4">
+                <label>Teléfono:</label>
+                <div>
+                    <InputText class="form-control" width="10" @bind-Value="Owner.FixedPhone"></InputText>
+                    <ValidationMessage For="@(() => Owner.FixedPhone)" />
+                </div>
+            </div>
+            <div class="col-4">
+                <label>Móvil:</label>
+                <div>
+                    <InputText class="form-control" width="10" @bind-Value="Owner.ContactPhone"></InputText>
+                    <ValidationMessage For="@(() => Owner.ContactPhone)" />
+                </div>
+            </div>
+        </div>
     </div>
+
+    <div class="mb-3 form-group">
+        <label>Dirección:</label>
+        <div>
+            <InputText class="form-control" width="10" @bind-Value="Owner.Address"></InputText>
+            <ValidationMessage For="@(() => Owner.Address)" />
+        </div>
+    </div>
+
+    <div class="text-center">
+        <button class="btn btn-primary" type="submit"><i class="bi bi-floppy" />Guardar Cambios</button>
+        <button class="btn btn-outline-info" type="reset"><i class="bi bi-x-circle"/>Limpiar</button>
+        <button class="btn btn-outline-success" onclick="ReturnAction"><i class="bi bi-arrow-left" />Regresar</button>
+    </div>
+
 </EditForm>
 
-
 @code {
-    [EditorRequired]
-    [Parameter]
-    public Owner Owner { get; set; }
+    private EditContext editContext = null!;
+    protected override void OnInitialized()
+    {
+        editContext = new(Owner);
+    }
 
-    [EditorRequired]
     [Parameter]
-    public EventCallback OnSubmit { get; set; }
+    [EditorRequired]
+    public Owner Owner { get; set; } = null!;
+
+    [Parameter]
+    [EditorRequired]
+    public EventCallback OnValidSubmit { get; set; }
+
 
     [EditorRequired]
     [Parameter]
     public EventCallback ReturnAction { get; set; }
+
+    public bool FormularioPosteadoConExito { get; set; } = false;
+
+    private async Task OnBeforeInternalNavigation(LocationChangingContext context)
+    {
+        var formularioFueEditado = editContext.IsModified();
+
+        if (!formularioFueEditado)
+        {
+            return;
+        }
+
+        if (FormularioPosteadoConExito)
+        {
+            return;
+        }
+
+        var resultado = await swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Confirmación",
+                Text = "¿Deseas abandonar la página y perder los cambios?",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true
+            });
+
+        var confirmado = !string.IsNullOrEmpty(resultado.Value);
+
+        if (confirmado)
+        {
+            return;
+        }
+
+        context.PreventNavigation();
+    }
 }

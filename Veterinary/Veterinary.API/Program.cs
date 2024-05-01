@@ -1,7 +1,8 @@
-
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Veterinary.API.Data;
+using Veterinary.API.Helpers;
+using Veterinary.Shared.Entities.Identity;
 
 namespace Veterinary.API
 {
@@ -18,6 +19,20 @@ namespace Veterinary.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<VeterinaryDbContext>(opt => opt.UseSqlServer("name=VeterinaryConnection"));
+            builder.Services.AddIdentity<User, IdentityRole>(x =>
+            {
+                x.User.RequireUniqueEmail = true;
+                x.Password.RequireDigit = false;
+                x.Password.RequiredUniqueChars = 0;
+                x.Password.RequireUppercase = false;
+                x.Password.RequireLowercase = false;
+                x.Password.RequireNonAlphanumeric = false;
+            })
+            .AddEntityFrameworkStores<VeterinaryDbContext>()
+            .AddDefaultTokenProviders();
+
+            builder.Services.AddScoped<IUserHelper, UserHelper>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -29,8 +44,14 @@ namespace Veterinary.API
 
             app.UseAuthorization();
 
-
             app.MapControllers();
+
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials()
+                .SetIsOriginAllowed(origin => true)
+            );
 
             app.Run();
         }

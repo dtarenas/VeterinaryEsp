@@ -6,9 +6,9 @@ namespace Veterinary.Shared.Entities
     {
         public int Id { get; set; }
 
-        [Display(Name = "Nombre mascota")]
-        [MaxLength(50, ErrorMessage = "Nombre no puede superar 50 caracteres")]
-        [Required(ErrorMessage = "Campo requerido")]
+        [Display(Name = "Nombre Mascota")]
+        [MaxLength(50, ErrorMessage = "{0} no puede superar {1} dígitos")]
+        [Required(ErrorMessage = "El campo {0} es obligatorio")]
         public string Name { get; set; }
     }
 }

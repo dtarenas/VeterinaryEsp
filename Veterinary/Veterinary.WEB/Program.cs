@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Veterinary.WEB.Repositories;
+using CurrieTechnologies.Razor.SweetAlert2;
 
 namespace Veterinary.WEB
 {
@@ -12,7 +13,8 @@ namespace Veterinary.WEB
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:7000") });
+            builder.Services.AddSweetAlert2();
             builder.Services.AddScoped<IRepository, Repository>();
             await builder.Build().RunAsync();
         }

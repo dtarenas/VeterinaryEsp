@@ -6,16 +6,14 @@ namespace Veterinary.WEB.Repositories
     {
         public HttpResponseWrapper(T? response, bool error, HttpResponseMessage httpResponseMessage)
         {
-            Error = error;
             Response = response;
+            Error = error;
             HttpResponseMessage = httpResponseMessage;
         }
 
-        public bool Error { get; set; }
-
-        public T? Response { get; set; }
-
-        public HttpResponseMessage HttpResponseMessage { get; set; }
+        public T? Response { get; }
+        public bool Error { get; }
+        public HttpResponseMessage HttpResponseMessage { get; }
 
         public async Task<string?> GetErrorMessageAsync()
         {
@@ -24,25 +22,25 @@ namespace Veterinary.WEB.Repositories
                 return null;
             }
 
-            var codigoEstatus = HttpResponseMessage.StatusCode;
-            if (codigoEstatus == HttpStatusCode.NotFound)
+            var statusCode = HttpResponseMessage.StatusCode;
+            if (statusCode == HttpStatusCode.NotFound)
             {
-                return "Recurso no encontrado";
+                return "Recurso no encontrado.";
             }
-            else if (codigoEstatus == HttpStatusCode.BadRequest)
+            if (statusCode == HttpStatusCode.BadRequest)
             {
                 return await HttpResponseMessage.Content.ReadAsStringAsync();
             }
-            else if (codigoEstatus == HttpStatusCode.Unauthorized)
+            if (statusCode == HttpStatusCode.Unauthorized)
             {
-                return " Debes loguearte para realizar esta acción";
+                return "Tienes que estar logueado para ejecutar esta operación.";
             }
-            else if (codigoEstatus == HttpStatusCode.Forbidden)
+            if (statusCode == HttpStatusCode.Forbidden)
             {
-                return " No tienes permisos para ejecutar esta acción";
+                return "No tienes permisos para hacer esta operación.";
             }
 
-            return "Ha ocurrido un error inesperado";
+            return "Ha ocurrido un error inesperado.";
         }
     }
 }

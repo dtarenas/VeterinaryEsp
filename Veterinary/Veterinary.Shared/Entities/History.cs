@@ -13,7 +13,7 @@ namespace Veterinary.Shared.Entities
 
         [Display(Name = "Descripción")]
         [MaxLength(100, ErrorMessage = "{1} no puede superar {2} caracteres")]
-        [Required(ErrorMessage = "Campo requerido")]
+        [Required(ErrorMessage = "Campo {0} requerido")]
         public string Description { get; set; }
 
         [Display(Name = "Observaciones")]

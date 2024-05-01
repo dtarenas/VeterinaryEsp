@@ -2,87 +2,135 @@
 @using Veterinary.Shared.Entities
 @using Veterinary.WEB.Repositories
 @using Veterinary.WEB.Shared
-
-
 @inject IRepository repository
+@inject SweetAlertService sweetAlertService
+@inject NavigationManager navigationManager
 
-<h1>Owners</h1>
+<div class="card mt-2">
+    <div class="card-header">
+        <span>
+            <i class="bi bi-person" /> Owners
+            <a class="btn btn-primary btn-sm float-end" href="/owners/create"><i class="bi bi-plus-circle" />New Owner</a>
+        </span>
+    </div>
+    <div class="card-body">
+        <GenericList MyList="Owners">
+            <Body>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                Document
+                            </th>
+                            <th>
+                                First Name
+                            </th>
+                            <th>
+                                Last Name
+                            </th>
+                            <th>
+                                Fixed Phone
+                            </th>
+                            <th>
+                                Contact Phone
+                            </th>
+                            <th>
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Owners!)
+                        {
+                            <tr>
+                                <td>
+                                    @item.Document
+                                </td>
+                                <td>
+                                    @item.FirstName
+                                </td>
+                                <td>
+                                    @item.LastName
+                                </td>
+                                <td>
+                                    @item.FixedPhone
+                                </td>
+                                <td>
+                                    @item.ContactPhone
+                                </td>
+                                <td>
+                                    <a href="/owners/edit/@item.Id" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square" /> Editar</a>
+                                    <button @onclick=@(() => DeleteAsync(item)) class="btn btn-sm btn-danger"><i class="bi bi-trash-fill" /> Borrar</button>
+                                </td>
 
-<div class="mb-3">
-
-
-    <a class="btn btn-primary " href="/owners/Create">New Owner</a>
-
-
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </Body>
+        </GenericList>
+    </div>
 </div>
-
-<GenericList MyList="Owners">
-
-    <Body>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Owner</th>
-                    <th></th>
-
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        First Name
-                    </td>
-                    <td>
-                        Last Name
-                    </td>
-                    <td>
-                        Address
-                    </td>
-                    <td>
-                        Actions
-                    </td>
-                </tr>
-                @foreach (var owner in Owners!)
-                {
-                    <tr>
-                        <td>
-                            @owner.FirstName
-                        </td>
-                        <td>
-                            @owner.LastName
-                        </td>
-                        <td>
-                            @owner.Address
-                        </td>
-                        <td>
-                            <a class="btn btn-warning">Editar</a>
-                            <button class="btn btn-danger">Borrar</button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-
-    </Body>
-
-</GenericList>
-
-
-
 
 
 @code {
+    public List<Owner> Owners { get; set; }
 
-
-    public List<Owner>? Owners { get; set; }
-
-    protected async override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        var responseHppt = await repository.GetAsync<List<Owner>>("/api/owners");
-        Owners = responseHppt.Response!;
+        await LoadAsync();
+    }
 
+    private async Task LoadAsync()
+    {
+        var responseHttp = await repository.GetAsync<List<Owner>>("/api/owners");
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+        Owners = responseHttp.Response;
+    }
 
+    private async Task DeleteAsync(Owner owner)
+    {
+        var result = await sweetAlertService.FireAsync(new SweetAlertOptions
+            {
+                Title = "Confirmación",
+                Text = $"¿Estas seguro de borrar el owner: {owner.FirstName}?",
+                Icon = SweetAlertIcon.Question,
+                ShowCancelButton = true,
+            });
+        var confirm = string.IsNullOrEmpty(result.Value);
+        if (confirm)
+        {
+            return;
+        }
 
+        var responseHttp = await repository.DeleteAsync<Owner>($"api/owners/{owner.Id}");
+        if (responseHttp.Error)
+        {
+            if (responseHttp.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo("owners");
+            }
+            else
+            {
+                var mensajeError = await responseHttp.GetErrorMessageAsync();
+                await sweetAlertService.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
+            }
+            return;
+        }
 
+        await LoadAsync();
+        var toast = sweetAlertService.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.BottomEnd,
+                ShowConfirmButton = true,
+                Timer = 3000
+            });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Registro eliminado con éxito.");
     }
 }
